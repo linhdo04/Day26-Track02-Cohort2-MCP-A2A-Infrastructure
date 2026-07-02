@@ -4,21 +4,15 @@ Lab sinh viên cho **AICB-P2T2 Tuần 6**, xây trên **Google ADK**.
 
 ## Bắt đầu nhanh
 
-Lab dùng **Conda** (môi trường khuyến nghị: `pii-env`). Không dùng `.venv`.
+Lab dùng **uv** để khóa dependency và tạo môi trường tái lập.
 
 ```bash
-# Tạo môi trường (chỉ lần đầu)
-conda create -n pii-env python=3.12 -y
-conda activate pii-env
-
-cd Day26-MCP_A2A_Infrastructure
-pip install -r requirements.txt
+uv sync --frozen
 cp .env.example .env   # thêm GOOGLE_API_KEY
-export PYTHONPATH=$PWD
-jupyter notebook day26_mcp_a2a_lab.ipynb
+uv run jupyter notebook day26_mcp_a2a_lab.ipynb
 ```
 
-> **Lưu ý `cryptography`:** Lab ghim `cryptography>=46.0.7,<47.0.0` để tương thích với `agent-governance-toolkit-core`. Nếu bạn dùng `presidio-anonymizer` bản cũ (2.2.360), hãy nâng cấp: `pip install -U "presidio-anonymizer>=2.2.363"`. Chạy lab trong conda env riêng (`pii-env`) để tránh xung đột package với base Anaconda.
+> **Lưu ý `cryptography`:** Lab ghim `cryptography>=46.0.7,<47.0.0`; `uv.lock` giữ toàn bộ dependency nhất quán.
 
 ## Cấu trúc dự án
 
@@ -66,11 +60,8 @@ Chỉnh policy tại `lab_utils/governance/policy.json`.
 **Bắt buộc trước Module 2 / Capstone.** Xem notebook Module 0.5 hoặc:
 
 ```bash
-conda activate pii-env
-export PYTHONPATH=$PWD
-
 # Capstone — một lệnh (A2A :8001–8003 + ADK Web :8000)
-bash scripts/start_capstone.sh
+uv run bash scripts/start_capstone.sh
 
 # Hoặc từng bước
 bash scripts/start_a2a_servers.sh      # :8001, :8002, :8003

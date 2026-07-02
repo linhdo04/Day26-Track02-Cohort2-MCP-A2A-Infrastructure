@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Chọn Python/uvicorn/adk có google-adk (conda pii-env) — source từ các script khác.
+# Chọn Python/uvicorn/adk trong môi trường do uv quản lý.
 
 load_dotenv_file() {
   local root="$1"
@@ -24,9 +24,9 @@ resolve_lab_python() {
   local root="${1:-.}"
   local c candidates=()
 
-  # Ưu tiên conda (pii-env) — lab không dùng .venv
-  if [[ -n "${CONDA_PREFIX:-}" && -x "${CONDA_PREFIX}/bin/python" ]]; then
-    candidates+=("${CONDA_PREFIX}/bin/python")
+  # `uv sync` tạo môi trường tái lập tại .venv.
+  if [[ -x "$root/.venv/bin/python" ]]; then
+    candidates+=("$root/.venv/bin/python")
   fi
   if command -v python >/dev/null 2>&1; then
     candidates+=("$(command -v python)")
@@ -50,8 +50,7 @@ setup_lab_env() {
   load_dotenv_file "$root"
   LAB_PYTHON="$(resolve_lab_python "$root")" || {
     echo "✗ Không tìm thấy Python có google-adk."
-    echo "  Chạy: conda activate pii-env"
-    echo "  Rồi: pip install -r requirements.txt"
+    echo "  Chạy: uv sync --frozen"
     exit 1
   }
   export PYTHONPATH="${PYTHONPATH:-}:$root"
